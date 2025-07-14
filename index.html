@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Крипто Новости и Курсы</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Крипто Новости и Курсы</h1>
+    </header>
+    <main>
+        <section id="crypto-rates">
+            <h2>Курсы криптовалют</h2>
+            <label for="currency-search" style="font-weight:bold;display:block;margin-bottom:4px;">Поиск по тикеру:</label>
+            <input id="currency-search" type="text" placeholder="Например: BTC" style="padding:6px 12px;font-size:1rem;border-radius:8px;border:1px solid #ccc;margin-bottom:8px;width:100%;max-width:300px;">
+            <label for="currency-select" style="font-weight:bold;display:block;margin-bottom:8px;">Выберите валюту:</label>
+            <select id="currency-select" style="padding:6px 12px;font-size:1rem;border-radius:8px;border:1px solid #ccc;">
+                <option value="bitcoin">Bitcoin</option>
+                <option value="ethereum">Ethereum</option>
+                <option value="solana">Solana</option>
+                <option value="toncoin">Toncoin</option>
+                <option value="tether">Tether (USDT)</option>
+            </select>
+            <div id="rates-list" style="margin-top:16px;">
+                <!-- Курсы будут подгружаться сюда -->
+            </div>
+        </section>
+        <section id="crypto-news">
+            <h2>Новости криптовалют</h2>
+            <div id="news-list">
+                <!-- Новости будут подгружаться сюда -->
+            </div>
+        </section>
+    </main>
+    <script src="script.js"></script>
+</body>
+</html> 

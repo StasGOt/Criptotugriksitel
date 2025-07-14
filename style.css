@@ -1,0 +1,151 @@
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: linear-gradient(120deg, #f7f9fa 60%, #e3e8f0 100%);
+    color: #222;
+}
+header {
+    background: #fff;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    padding: 36px 0 20px 0;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+header h1 {
+    margin: 0;
+    font-size: 2.7rem;
+    letter-spacing: 1px;
+    font-weight: 800;
+    color: #2a3b8f;
+    text-shadow: 0 2px 8px rgba(42,59,143,0.07);
+}
+main {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 0 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 36px;
+}
+section {
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 4px 24px rgba(42,59,143,0.10);
+    padding: 32px 28px 28px 28px;
+    flex: 1 1 370px;
+    min-width: 320px;
+    transition: box-shadow 0.2s;
+}
+section:hover {
+    box-shadow: 0 8px 32px rgba(42,59,143,0.16);
+}
+section h2 {
+    margin-top: 0;
+    font-size: 1.6rem;
+    color: #2563eb;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+#crypto-rates label {
+    margin-bottom: 4px;
+    display: block;
+    font-weight: 600;
+    color: #2a3b8f;
+}
+#currency-search, #currency-select {
+    width: 100%;
+    max-width: 350px;
+    box-sizing: border-box;
+    margin-bottom: 12px;
+    display: block;
+    border-radius: 10px;
+    border: 1.5px solid #c7d2fe;
+    background: #f3f6fd;
+    font-size: 1.05rem;
+    padding: 10px 14px;
+    transition: border 0.2s, box-shadow 0.2s;
+}
+#currency-search:focus, #currency-select:focus {
+    border: 1.5px solid #2563eb;
+    box-shadow: 0 0 0 2px #a5b4fc44;
+    outline: none;
+}
+#currency-search {
+    margin-bottom: 8px;
+}
+#currency-select {
+    margin-bottom: 16px;
+}
+#rates-list {
+    margin-top: 16px;
+}
+.crypto-rate {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 0 10px 0;
+    border-bottom: 1.5px solid #e0e7ef;
+    font-size: 1.18rem;
+    font-weight: 600;
+    color: #2a3b8f;
+    letter-spacing: 0.5px;
+}
+.crypto-rate:last-child {
+    border-bottom: none;
+}
+.news-item {
+    margin-bottom: 22px;
+    padding-bottom: 14px;
+    border-bottom: 1.5px solid #e0e7ef;
+    background: none;
+    transition: background 0.15s;
+    border-radius: 0;
+}
+.news-item:last-child {
+    border-bottom: none;
+}
+.news-item:hover {
+    background: #f3f6fd;
+    border-radius: 10px;
+}
+.news-title {
+    font-weight: bold;
+    color: #2563eb;
+    text-decoration: none;
+    font-size: 1.13rem;
+    transition: color 0.15s;
+}
+.news-title:hover {
+    color: #1e40af;
+    text-decoration: underline;
+}
+.news-date {
+    color: #888;
+    font-size: 0.98rem;
+    margin-top: 2px;
+}
+footer {
+    text-align: center;
+    padding: 28px 0 14px 0;
+    color: #888;
+    font-size: 1.05rem;
+    background: none;
+}
+@media (max-width: 700px) {
+    main {
+        flex-direction: column;
+        gap: 22px;
+    }
+    section {
+        min-width: unset;
+        padding: 20px 8px 16px 8px;
+    }
+    #currency-search, #currency-select {
+        max-width: 100%;
+    }
+    header h1 {
+        font-size: 2rem;
+    }
+} 
