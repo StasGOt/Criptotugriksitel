@@ -3,6 +3,20 @@ body {
     font-family: 'Segoe UI', Arial, sans-serif;
     background: linear-gradient(120deg, #f7f9fa 60%, #e3e8f0 100%);
     color: #222;
+    transition: background 0.3s, color 0.3s;
+}
+
+body.dark-theme {
+    background: linear-gradient(120deg, #181c24 60%, #232a36 100%);
+    color: #e3e8f0;
+}
+body.dark-theme header {
+    background: #232a36;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+}
+body.dark-theme header h1 {
+    color: #90a4f7;
+    text-shadow: 0 2px 8px rgba(42,59,143,0.18);
 }
 header {
     background: #fff;
@@ -37,6 +51,7 @@ section {
     flex: 1 1 370px;
     min-width: 320px;
     transition: box-shadow 0.2s;
+    transition: background 0.3s, color 0.3s, border 0.3s;
 }
 section:hover {
     box-shadow: 0 8px 32px rgba(42,59,143,0.16);
@@ -173,4 +188,49 @@ footer {
     header h1 {
         font-size: 2rem;
     }
+} 
+body.dark-theme #rates-list {
+    color: #e3e8f0;
+}
+body.dark-theme .crypto-rate {
+    color: #90a4f7;
+    border-bottom: 1.5px solid #374151;
+}
+body.dark-theme .news-item {
+    border-bottom: 1.5px solid #374151;
+}
+body.dark-theme .news-item:hover {
+    background: #181c24;
+}
+body.dark-theme .news-title {
+    color: #90a4f7;
+}
+body.dark-theme .news-title:hover {
+    color: #fff;
+}
+body.dark-theme .news-date {
+    color: #b0b8c9;
+}
+body.dark-theme .period-btn {
+    background: #181c24;
+    color: #90a4f7;
+    border: 1.5px solid #374151;
+}
+body.dark-theme .period-btn:hover, body.dark-theme .period-btn.active {
+    background: #90a4f7;
+    color: #181c24;
+    border: 1.5px solid #90a4f7;
+}
+body.dark-theme #chart-header, body.dark-theme #chart-pair, body.dark-theme #chart-price {
+    color: #90a4f7;
+}
+body.dark-theme footer {
+    color: #b0b8c9;
+} 
+body.dark-theme section {
+    background: #232a36 !important;
+    color: #e3e8f0;
+    box-shadow: 0 4px 24px rgba(42,59,143,0.18);
+    border: 1.5px solid #232a36 !important;
+    transition: background 0.3s, color 0.3s, border 0.3s;
 } 

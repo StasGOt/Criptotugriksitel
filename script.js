@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     fetchBinanceSymbols();
     setupPeriodButtons();
+    setupThemeToggle();
 });
 
 let allBinancePairs = [];
@@ -198,7 +199,7 @@ function fetchAndRenderChart(symbol, period) {
                 clearChart();
                 return;
             }
-            let labels, prices;
+            let labels;
             if (period === 1) {
                 labels = data.map(item => {
                     const date = new Date(item[0]);
@@ -210,7 +211,7 @@ function fetchAndRenderChart(symbol, period) {
                     return date.toLocaleDateString('ru-RU', { day: '2-digit', month: 'short' });
                 });
             }
-            prices = data.map(item => parseFloat(item[4])); // close price
+            let prices = data.map(item => parseFloat(item[4])); // close price
             renderChart(ctx, labels, prices, symbol, period);
         })
         .catch(() => {
@@ -287,4 +288,21 @@ function clearChart() {
     }
     const ctx = document.getElementById('price-chart').getContext('2d');
     ctx.clearRect(0, 0, 600, 260);
+}
+
+function setupThemeToggle() {
+    const btn = document.getElementById('theme-toggle');
+    const body = document.body;
+    // Проверяем localStorage
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+        body.classList.add('dark-theme');
+        btn.textContent = '☀️ Светлая тема';
+    }
+    btn.addEventListener('click', () => {
+        body.classList.toggle('dark-theme');
+        const isDark = body.classList.contains('dark-theme');
+        btn.textContent = isDark ? '☀️ Светлая тема' : '🌙 Тёмная тема';
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    });
 }
