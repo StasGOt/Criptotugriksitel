@@ -133,6 +133,31 @@ footer {
     font-size: 1.05rem;
     background: none;
 }
+/* Стили для кнопок выбора периода */
+.period-btn {
+    background: #f3f6fd;
+    color: #2563eb;
+    border: 1.5px solid #c7d2fe;
+    border-radius: 8px;
+    padding: 6px 16px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s, border 0.15s, color 0.15s;
+}
+.period-btn:hover, .period-btn.active {
+    background: #2563eb;
+    color: #fff;
+    border: 1.5px solid #2563eb;
+}
+#chart-header {
+    margin-bottom: 8px;
+}
+#chart-pair, #chart-price {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #2563eb;
+}
 @media (max-width: 700px) {
     main {
         flex-direction: column;

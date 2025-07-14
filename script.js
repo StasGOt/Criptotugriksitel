@@ -1,8 +1,14 @@
 document.addEventListener('DOMContentLoaded', () => {
     fetchBinanceSymbols();
+    setupPeriodButtons();
 });
 
 let allBinancePairs = [];
+let priceChart = null;
+let currentSymbol = null;
+let currentBase = null;
+let currentPeriod = 7;
+let currentPrice = null;
 
 function fetchBinanceSymbols() {
     const select = document.getElementById('currency-select');
@@ -20,14 +26,18 @@ function fetchBinanceSymbols() {
             renderPairsSelect(allBinancePairs);
             // Показываем курс первой пары
             if (allBinancePairs.length > 0) {
-                fetchBinancePrice(allBinancePairs[0].symbol);
+                updateChartHeader(allBinancePairs[0].symbol, allBinancePairs[0].baseAsset);
+                fetchBinancePrice(allBinancePairs[0].symbol, true);
                 fetchCryptoNews(allBinancePairs[0].baseAsset);
+                fetchAndRenderChart(allBinancePairs[0].symbol, currentPeriod);
             }
             select.addEventListener('change', (e) => {
                 const symbol = e.target.value;
                 const base = symbol.replace(/(RUB|USDT)$/,'');
-                fetchBinancePrice(symbol);
+                updateChartHeader(symbol, base);
+                fetchBinancePrice(symbol, true);
                 fetchCryptoNews(base);
+                fetchAndRenderChart(symbol, currentPeriod);
             });
             if (search) {
                 search.addEventListener('input', (e) => {
@@ -38,11 +48,15 @@ function fetchBinanceSymbols() {
                     renderPairsSelect(filtered);
                     // Если есть хотя бы одна пара — сразу показываем её курс и новости
                     if (filtered.length > 0) {
-                        fetchBinancePrice(filtered[0].symbol);
+                        updateChartHeader(filtered[0].symbol, filtered[0].baseAsset);
+                        fetchBinancePrice(filtered[0].symbol, true);
                         fetchCryptoNews(filtered[0].baseAsset);
+                        fetchAndRenderChart(filtered[0].symbol, currentPeriod);
                     } else {
                         document.getElementById('rates-list').innerHTML = '<p>Нет такой валюты.</p>';
                         document.getElementById('news-list').innerHTML = '';
+                        clearChart();
+                        updateChartHeader(null, null);
                     }
                 });
             }
@@ -62,7 +76,7 @@ function renderPairsSelect(pairs) {
     });
 }
 
-function fetchBinancePrice(symbol) {
+function fetchBinancePrice(symbol, updateHeader = false) {
     const ratesList = document.getElementById('rates-list');
     ratesList.innerHTML = '<p>Загрузка курса...</p>';
     fetch(`https://api.binance.com/api/v3/ticker/price?symbol=${symbol}`)
@@ -75,14 +89,58 @@ function fetchBinancePrice(symbol) {
                 if (match) {
                     pairLabel = match[1] + '/' + match[2];
                 }
-                ratesList.innerHTML = `<div style="font-size:1.1rem;margin-bottom:4px;color:#888;">Текущий курс для: <b>${pairLabel}</b></div><div class=\"crypto-rate\"><span>${pairLabel}</span><span>${parseFloat(data.price).toLocaleString('ru-RU', {maximumFractionDigits: 8})}</span></div>`;
+                const priceStr = parseFloat(data.price).toLocaleString('ru-RU', {maximumFractionDigits: 8});
+                ratesList.innerHTML = `<div class=\"crypto-rate\"><span>${priceStr}</span></div>`;
+                currentPrice = priceStr;
+                if (updateHeader) {
+                    updateChartHeader(symbol, match ? match[1] : symbol);
+                }
             } else {
                 ratesList.innerHTML = '<p>Нет данных по выбранной валюте.</p>';
+                currentPrice = null;
             }
         })
         .catch(() => {
             ratesList.innerHTML = '<p style="color:red">Ошибка загрузки курса.</p>';
+            currentPrice = null;
         });
+}
+
+function updateChartHeader(symbol, base) {
+    const pairEl = document.getElementById('chart-pair');
+    const priceEl = document.getElementById('chart-price');
+    if (!symbol || !base) {
+        pairEl.textContent = '—';
+        priceEl.textContent = '—';
+        currentSymbol = null;
+        currentBase = null;
+        return;
+    }
+    const match = symbol.match(/^([A-Z0-9]+)(RUB|USDT)$/);
+    let pairLabel = symbol;
+    if (match) {
+        pairLabel = match[1] + '/' + match[2];
+    }
+    pairEl.textContent = pairLabel;
+    priceEl.textContent = currentPrice ? currentPrice : '...';
+    currentSymbol = symbol;
+    currentBase = base;
+}
+
+function setupPeriodButtons() {
+    const periodBtns = document.querySelectorAll('.period-btn');
+    periodBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            periodBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentPeriod = parseInt(btn.dataset.period);
+            if (currentSymbol) {
+                fetchAndRenderChart(currentSymbol, currentPeriod);
+            }
+        });
+    });
+    // По умолчанию выделить 7 дней
+    document.querySelector('.period-btn[data-period="7"]').classList.add('active');
 }
 
 function fetchCryptoNews(baseAsset) {
@@ -114,4 +172,119 @@ function fetchCryptoNews(baseAsset) {
         .catch(() => {
             newsList.innerHTML = '<p style="color:red">Ошибка загрузки новостей.</p>';
         });
+}
+
+function fetchAndRenderChart(symbol, period) {
+    const ctx = document.getElementById('price-chart').getContext('2d');
+    let interval, startTime;
+    const now = Date.now();
+    if (period === 1) {
+        interval = '15m';
+        startTime = now - 1 * 24 * 60 * 60 * 1000;
+    } else if (period === 7) {
+        interval = '1h';
+        startTime = now - 7 * 24 * 60 * 60 * 1000;
+    } else if (period === 30) {
+        interval = '4h';
+        startTime = now - 30 * 24 * 60 * 60 * 1000;
+    } else {
+        interval = '1d';
+        startTime = now - 90 * 24 * 60 * 60 * 1000;
+    }
+    fetch(`https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=${interval}&startTime=${startTime}&endTime=${now}`)
+        .then(response => response.json())
+        .then(data => {
+            if (!Array.isArray(data) || data.length === 0) {
+                clearChart();
+                return;
+            }
+            let labels, prices;
+            if (period === 1) {
+                labels = data.map(item => {
+                    const date = new Date(item[0]);
+                    return date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+                });
+            } else {
+                labels = data.map(item => {
+                    const date = new Date(item[0]);
+                    return date.toLocaleDateString('ru-RU', { day: '2-digit', month: 'short' });
+                });
+            }
+            prices = data.map(item => parseFloat(item[4])); // close price
+            renderChart(ctx, labels, prices, symbol, period);
+        })
+        .catch(() => {
+            clearChart();
+        });
+}
+
+function renderChart(ctx, labels, prices, symbol, period) {
+    if (priceChart) {
+        priceChart.destroy();
+    }
+    const match = symbol.match(/^([A-Z0-9]+)(RUB|USDT)$/);
+    let pairLabel = symbol;
+    if (match) {
+        pairLabel = match[1] + '/' + match[2];
+    }
+    // Обновить цену справа
+    document.getElementById('chart-pair').textContent = pairLabel;
+    document.getElementById('chart-price').textContent = currentPrice ? currentPrice : (prices.length ? prices[prices.length-1].toLocaleString('ru-RU', {maximumFractionDigits:8}) : '—');
+    priceChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: '',
+                data: prices,
+                borderColor: '#2563eb',
+                backgroundColor: 'rgba(37,99,235,0.10)',
+                pointRadius: 4,
+                pointBackgroundColor: '#2563eb',
+                pointBorderColor: '#fff',
+                borderWidth: 2.5,
+                tension: 0.25,
+                fill: true,
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false },
+                title: { display: false }
+            },
+            scales: {
+                x: {
+                    display: true,
+                    ticks: { maxTicksLimit: 8, color: '#888', font: { size: 13 } },
+                    grid: { display: false }
+                },
+                y: {
+                    display: true,
+                    ticks: { color: '#2563eb', font: { size: 13 } },
+                    grid: { color: '#e0e7ef' }
+                }
+            },
+            elements: {
+                line: { borderJoinStyle: 'round' },
+                point: { radius: 4, hoverRadius: 6 }
+            },
+            interaction: {
+                intersect: false,
+                mode: 'index',
+            },
+            animation: {
+                duration: 600,
+            }
+        }
+    });
+}
+
+function clearChart() {
+    if (priceChart) {
+        priceChart.destroy();
+        priceChart = null;
+    }
+    const ctx = document.getElementById('price-chart').getContext('2d');
+    ctx.clearRect(0, 0, 600, 260);
 }

@@ -26,6 +26,19 @@
             <div id="rates-list" style="margin-top:16px;">
                 <!-- Курсы будут подгружаться сюда -->
             </div>
+            <div style="margin-top:24px;">
+                <div id="chart-header" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                    <span id="chart-pair" style="font-size:1.25rem;font-weight:700;color:#2563eb;">—</span>
+                    <span id="chart-price" style="font-size:1.25rem;font-weight:700;color:#2563eb;">—</span>
+                </div>
+                <div id="chart-period" style="margin-bottom:8px;display:flex;gap:8px;">
+                    <button class="period-btn" data-period="1">1 день</button>
+                    <button class="period-btn" data-period="7" style="font-weight:bold;">7 дней</button>
+                    <button class="period-btn" data-period="30">30 дней</button>
+                    <button class="period-btn" data-period="90">90 дней</button>
+                </div>
+                <canvas id="price-chart" height="260"></canvas>
+            </div>
         </section>
         <section id="crypto-news">
             <h2>Новости криптовалют</h2>
@@ -34,6 +47,7 @@
             </div>
         </section>
     </main>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="script.js"></script>
 </body>
 </html> 
